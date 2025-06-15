@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import Login from "./Login";
-import { HiOutlineUserCircle, HiOutlinePencil, HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
+import { HiOutlineUserCircle, HiOutlinePencil, HiOutlineArrowRightOnRectangle, HiOutlineClipboard } from "react-icons/hi2";
 import { useRouter } from "next/navigation";
 
 const UserProfile: React.FC = () => {
@@ -75,6 +75,9 @@ const UserProfile: React.FC = () => {
         <div ref={dropdownRef} className="absolute right-0 top-12 z-50 bg-white shadow-lg rounded w-40 py-2">
           <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={() => { setShowDropdown(false); router.push("/profile"); }}>
             <span className="inline-flex mr-2"><HiOutlinePencil size={20} color="#111" /></span> Edit Profile
+          </button>
+          <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={() => { setShowDropdown(false); router.push("/orders"); }}>
+            <span className="inline-flex mr-2"><HiOutlineClipboard size={20} color="#111" /></span> Orders
           </button>
           <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={logout}>
             <span className="inline-flex mr-2"><HiOutlineArrowRightOnRectangle size={20} color="#111" /></span> Logout
