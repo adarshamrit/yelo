@@ -12,7 +12,7 @@ app.mount("/uploaded_images", StaticFiles(directory="uploaded_images"), name="up
 # Allow CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000"],  # Only allow frontend origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
