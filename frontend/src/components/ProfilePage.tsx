@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
 import UserAddresses from "./UserAddresses";
+import PaymentMethods from "./PaymentMethods";
 import { useRouter } from "next/navigation";
 import { HiOutlineHome } from "react-icons/hi2";
 
@@ -19,6 +20,7 @@ const ProfilePage: React.FC = () => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [morph, setMorph] = useState(false);
+  const [showText, setShowText] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -60,6 +62,16 @@ const ProfilePage: React.FC = () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    let textTimeout: NodeJS.Timeout;
+    if (morph) {
+      textTimeout = setTimeout(() => setShowText(true), 700); // match duration-700
+    } else {
+      setShowText(false);
+    }
+    return () => clearTimeout(textTimeout);
+  }, [morph]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -112,7 +124,7 @@ const ProfilePage: React.FC = () => {
           <HiOutlineHome size={32} color="#111" />
         </span>
         <span
-          className={`ml-3 font-semibold text-base text-gray-900 transition-opacity duration-500 ${morph ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}`}
+          className={`ml-3 font-semibold text-base text-gray-900 transition-opacity duration-500 ${showText ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}`}
           style={{ transition: "opacity 0.5s, width 0.5s" }}
         >
           Back to Home
@@ -196,6 +208,7 @@ const ProfilePage: React.FC = () => {
         </div>
       )}
       <UserAddresses />
+      <PaymentMethods />
     </div>
   );
 };

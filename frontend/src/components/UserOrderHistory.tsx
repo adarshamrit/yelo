@@ -14,6 +14,7 @@ const UserOrderHistory: React.FC = () => {
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [tracking, setTracking] = useState<any[]>([]);
   const [morph, setMorph] = useState(false);
+  const [showText, setShowText] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Handler to trigger morph on interaction
@@ -48,6 +49,16 @@ const UserOrderHistory: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let textTimeout: NodeJS.Timeout;
+    if (morph) {
+      textTimeout = setTimeout(() => setShowText(true), 700); // match duration-700
+    } else {
+      setShowText(false);
+    }
+    return () => clearTimeout(textTimeout);
+  }, [morph]);
+
   const fetchTracking = async (orderId: number) => {
     setLoading(true);
     const res = await fetch(`${API_BASE}/orders/${orderId}/tracking`, {
@@ -79,7 +90,7 @@ const UserOrderHistory: React.FC = () => {
           <HiOutlineHome size={32} color="#111" />
         </span>
         <span
-          className={`ml-3 font-semibold text-base text-gray-900 transition-opacity duration-500 ${morph ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}`}
+          className={`ml-3 font-semibold text-base text-gray-900 transition-opacity duration-500 ${showText ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}`}
           style={{ transition: "opacity 0.5s, width 0.5s" }}
         >
           Back to Home

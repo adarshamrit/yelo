@@ -15,3 +15,4 @@ class User(Base):
     is_blocked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")
+    payment_methods = relationship("PaymentMethod", back_populates="user", cascade="all, delete-orphan")
