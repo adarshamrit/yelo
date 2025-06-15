@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import Login from "./Login";
 import { HiOutlineUserCircle, HiOutlinePencil, HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
+import { useRouter } from "next/navigation";
 
 const UserProfile: React.FC = () => {
   const { isAuthenticated, logout, user } = useAuth();
@@ -10,6 +11,7 @@ const UserProfile: React.FC = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [username, setUsername] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   React.useEffect(() => {
     // Try to get username from localStorage or backend (if available)
@@ -71,7 +73,7 @@ const UserProfile: React.FC = () => {
       </div>
       {showDropdown && (
         <div ref={dropdownRef} className="absolute right-0 top-12 z-50 bg-white shadow-lg rounded w-40 py-2">
-          <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={() => { setShowDropdown(false); /* TODO: trigger edit profile */ }}>
+          <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={() => { setShowDropdown(false); router.push("/profile"); }}>
             <span className="inline-flex mr-2"><HiOutlinePencil size={20} color="#111" /></span> Edit Profile
           </button>
           <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={logout}>

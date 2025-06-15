@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends, Header, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from backend.models.user import User
@@ -33,6 +33,11 @@ class LoginRequest(BaseModel):
     phone: str = None
     email: str = None
     password: str
+
+class ProfileUpdateRequest(BaseModel):
+    username: str
+    email: str
+    phone: str
 
 @router.post("/register")
 async def register(data: RegisterRequest):
@@ -102,3 +107,29 @@ async def get_me(Authorization: str = Header(...)):
             "phone": user.phone,
             "is_admin": user.is_admin,
         }
+
+@router.put("/profile")
+async def update_profile(
+    data: ProfileUpdateRequest = Body(...),
+    Authorization: str = Header(...)
+):
+    if not Authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Invalid token")
+    token = Authorization.split(" ", 1)[1]
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get("user_id")
+        if not user_id:
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    async with async_session() as session:
+        result = await session.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        user.username = data.username
+        user.email = data.email
+        user.phone = data.phone
+        await session.commit()
+        return {"status": "success"}

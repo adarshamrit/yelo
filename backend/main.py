@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from backend.routes import items, cart, payment, login, delivery_map, admin_items, admin_orders, admin_users, admin_analytics, admin_settings
+from backend.routes import items, cart, payment, login, delivery_map, admin_items, admin_orders, admin_users, admin_analytics, admin_settings, addresses
 
 app = FastAPI()
 
@@ -32,6 +32,7 @@ app.include_router(admin_orders.router)
 app.include_router(admin_users.router)
 app.include_router(admin_analytics.router)
 app.include_router(admin_settings.router)
+app.include_router(addresses.router)
 
 # Placeholder for items, cart, payment, login, and order delivery endpoints
 # Add your routes in routes/ and import them here

@@ -1,28 +1,44 @@
 // src/components/Cart.tsx
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCart } from "@frontend/context/CartContext";
+import { useAuth } from "../hooks/useAuth";
 
 const API_BASE = "http://localhost:8000";
 
 const Cart = () => {
   const { cart, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { token } = useAuth();
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<number | null>(null);
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const [showPayment, setShowPayment] = useState(false);
-  const [address, setAddress] = useState("");
   const [card, setCard] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
+  useEffect(() => {
+    if (!token) return;
+    fetch(`${API_BASE}/addresses`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(res => res.ok ? res.json() : [])
+      .then((data) => {
+        setAddresses(data);
+        const def = data.find((a: any) => a.is_default);
+        setSelectedAddressId(def ? def.id : data[0]?.id || null);
+      });
+  }, [token]);
+
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    if (!address.trim()) {
-      setError("Please enter a delivery address.");
+    if (!selectedAddressId) {
+      setError("Please select a delivery address.");
       return;
     }
-    if (!card.match(/^\d{12,19}$/)) {
+    if (!card.match(/^[0-9]{12,19}$/)) {
       setError("Please enter a valid card number.");
       return;
     }
@@ -34,7 +50,7 @@ const Cart = () => {
         body: JSON.stringify({
           items: cart.map(i => ({ id: i.id, quantity: i.quantity })),
           total,
-          address,
+          address_id: selectedAddressId,
           card,
         }),
       });
@@ -110,13 +126,23 @@ const Cart = () => {
       {showPayment && (
         <form className="mt-6 p-4 border rounded bg-gray-50" onSubmit={handleCheckout}>
           <h3 className="text-lg font-bold mb-2 text-yellow-600">Payment Details</h3>
-          <input
-            className="w-full mb-3 p-2 border border-gray-300 rounded"
-            type="text"
-            placeholder="Delivery Address"
-            value={address}
-            onChange={e => setAddress(e.target.value)}
-          />
+          <div className="mb-3">
+            <label className="block mb-1 font-semibold">Delivery Address</label>
+            <select
+              className="w-full p-2 border border-gray-300 rounded"
+              value={selectedAddressId || ""}
+              onChange={e => setSelectedAddressId(Number(e.target.value))}
+              required
+            >
+              <option value="" disabled>Select address</option>
+              {addresses.map((addr: any) => (
+                <option key={addr.id} value={addr.id}>
+                  {addr.label ? `${addr.label}: ` : ""}{addr.address}, {addr.city}, {addr.state} {addr.zip_code}
+                  {addr.is_default ? " (Default)" : ""}
+                </option>
+              ))}
+            </select>
+          </div>
           <input
             className="w-full mb-3 p-2 border border-gray-300 rounded"
             type="text"

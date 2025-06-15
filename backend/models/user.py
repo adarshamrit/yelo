@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, relationship
 import datetime
 
 Base = declarative_base()
@@ -14,3 +14,4 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
     is_blocked = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    addresses = relationship("Address", back_populates="user", cascade="all, delete-orphan")
