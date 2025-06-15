@@ -1,0 +1,3 @@
+# Yelo FastAPI requirements
+fastapi
+uvicorn
