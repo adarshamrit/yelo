@@ -1,15 +1,27 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { HiOutlineHome } from "react-icons/hi2";
 
 const API_BASE = "http://localhost:8000";
 
 const UserOrderHistory: React.FC = () => {
   const { token } = useAuth();
+  const router = useRouter();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
   const [tracking, setTracking] = useState<any[]>([]);
+  const [morph, setMorph] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handler to trigger morph on interaction
+  const triggerMorph = () => {
+    setMorph(true);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => setMorph(false), 4000);
+  };
 
   useEffect(() => {
     if (!token) return;
@@ -21,6 +33,20 @@ const UserOrderHistory: React.FC = () => {
       .then(data => setOrders(data))
       .finally(() => setLoading(false));
   }, [token]);
+
+  useEffect(() => {
+    // Listen for user interaction
+    const handleInteract = () => triggerMorph();
+    window.addEventListener("mousemove", handleInteract);
+    window.addEventListener("touchstart", handleInteract);
+    window.addEventListener("keydown", handleInteract);
+    return () => {
+      window.removeEventListener("mousemove", handleInteract);
+      window.removeEventListener("touchstart", handleInteract);
+      window.removeEventListener("keydown", handleInteract);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const fetchTracking = async (orderId: number) => {
     setLoading(true);
@@ -36,7 +62,29 @@ const UserOrderHistory: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6 mt-8">
+    <div className="bg-white rounded-lg shadow p-6 mt-8 relative">
+      {/* Animated Floating Home Bubble */}
+      <button
+        className={`fixed bottom-8 right-8 z-50 flex items-center justify-center transition-all duration-700 ease-in-out
+          ${morph ? "w-48 rounded-2xl px-6" : "w-14 rounded-full px-0"}
+          h-14 bg-yellow-400 shadow-lg text-2xl text-white hover:bg-yellow-500 focus:outline-none`}
+        style={{ minWidth: morph ? 160 : 56, alignItems: 'center', gap: morph ? 12 : 0 }}
+        onClick={() => router.push("/")}
+        onMouseEnter={triggerMorph}
+        onFocus={triggerMorph}
+        title="Back to Home"
+        aria-label="Back to Home"
+      >
+        <span className="flex items-center justify-center h-full">
+          <HiOutlineHome size={32} color="#111" />
+        </span>
+        <span
+          className={`ml-3 font-semibold text-base text-gray-900 transition-opacity duration-500 ${morph ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}`}
+          style={{ transition: "opacity 0.5s, width 0.5s" }}
+        >
+          Back to Home
+        </span>
+      </button>
       <h3 className="text-xl font-bold mb-4 text-yellow-600">My Orders</h3>
       {loading && <div>Loading...</div>}
       <ul className="space-y-4">

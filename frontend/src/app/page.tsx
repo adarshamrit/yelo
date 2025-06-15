@@ -17,8 +17,8 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-200">
       <Navbar setFlow={setFlow} />
-      <header className="bg-yellow-400 shadow p-6 mb-8">
-        <h1 className="glitchy-title text-4xl font-extrabold text-center text-gray-900 tracking-tight drop-shadow-lg">
+      <header className="bg-yellow-400 shadow flex flex-col items-center justify-center py-16 mb-8">
+        <h1 className="glitchy-title text-5xl font-extrabold text-center text-gray-900 tracking-tight drop-shadow-lg mb-2">
           <a
             href="#items"
             onClick={() => setFlow("items")}
@@ -29,9 +29,9 @@ export default function Home() {
               Yelo
             </span>
           </a>
-          <span className="text-lg font-bold">: Go Hyperlocal</span>
+          <span className="block text-2xl font-bold mt-2">Go Hyperlocal</span>
         </h1>
-        <p className="text-center text-gray-700 mt-2">
+        <p className="text-center text-gray-800 mt-4 text-lg max-w-xl mx-auto font-medium">
           Order your favorite items, track delivery, and pay seamlessly.
         </p>
       </header>
