@@ -17,3 +17,11 @@
 .animate-fade-in-down {
   animation: fade-in-down 0.2s ease-out;
 }
+
+.card-aspect {
+  aspect-ratio: 1.586/1;
+}
+
+.card-logo {
+  pointer-events: none;
+}

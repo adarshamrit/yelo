@@ -117,8 +117,7 @@ const PaymentMethods: React.FC = () => {
         {methods.map((pm) => (
           <div
             key={pm.id}
-            className={`relative w-72 h-44 rounded-xl shadow-lg flex flex-col justify-between p-5 transition-colors duration-300 ${pm.is_default ? "bg-gradient-to-br from-yellow-400 to-yellow-600 border-4 border-yellow-700" : "bg-gray-100 border border-gray-300"}`}
-            style={{ aspectRatio: '1.586/1' }}
+            className={`relative w-72 h-44 rounded-xl shadow-lg flex flex-col justify-between p-5 transition-colors duration-300 card-aspect ${pm.is_default ? "bg-gradient-to-br from-yellow-400 to-yellow-600 border-4 border-yellow-700" : "bg-gray-100 border border-gray-300"}`}
           >
             <span className="text-lg font-mono font-semibold text-gray-800 tracking-widest">XXXX {pm.card_last4}</span>
             <div className="flex items-end justify-between w-full">
@@ -128,8 +127,7 @@ const PaymentMethods: React.FC = () => {
               <img
                 src={cardLogos[pm.card_type] || "/card.svg"}
                 alt={pm.card_type}
-                className="w-12 h-12 object-contain absolute bottom-4 right-4"
-                style={{ pointerEvents: 'none' }}
+                className="w-12 h-12 object-contain absolute bottom-4 right-4 card-logo"
               />
             </div>
             <div className="absolute top-2 right-2 flex gap-2">

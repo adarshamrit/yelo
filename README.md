@@ -1,40 +1,54 @@
-# Yelo: Hyperlocal Delivery System
+# 🚀 Yelo: Hyperlocal Delivery System
 
-Yelo is a monorepo for a hyperlocal delivery system. It consists of:
+Yelo is a monorepo for a modern, full-stack hyperlocal delivery system.
 
-- **frontend/**: Next.js single-page webapp (TypeScript, Tailwind CSS)
-- **backend/**: FastAPI backend (Python)
+## 🗂️ Structure
+- **frontend/**: Next.js webapp (TypeScript, Tailwind CSS)
+- **backend/**: FastAPI backend (Python, PostgreSQL)
 
-## Features
-- Items listing
-- Cart management
-- Payment integration (placeholder)
-- User login
-- Map integration for order delivery
+## ✨ Features
+- 🛒 Items listing & search
+- 🛍️ Cart management with global context
+- 💳 Payment methods (add, delete, set default)
+- 👤 User authentication (JWT, phone/email)
+- 🏠 Multiple addresses per user
+- 📦 Order creation, history, and tracking
+- 🗺️ Map integration for delivery
+- 🛠️ Admin dashboard (CRUD for items, orders, users, analytics)
+- 🎨 Modern UI/UX with animated bubbles, smooth transitions
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Frontend
 ```bash
 cd frontend
+npm install
 npm run dev
 ```
+Visit [http://localhost:3000](http://localhost:3000)
 
 ### Backend
-```bash
-# Windows PowerShell
-./backend/Scripts/Activate.ps1
+```powershell
+cd backend
+./Scripts/Activate.ps1  # Activate virtualenv (Windows)
+pip install -r requirements.txt
 uvicorn main:app --reload
 ```
+Visit [http://localhost:8000/docs](http://localhost:8000/docs) for API docs
 
-## Folder Structure
-- `frontend/` - Next.js app (src/pages, src/components, etc.)
+### Database
+- PostgreSQL required. Update connection string in `backend/database.py`.
+- Run Alembic migrations if needed.
+
+## 📁 Folder Structure
+- `frontend/` - Next.js app (src/app, src/components, etc.)
 - `backend/` - FastAPI app (main.py, models/, routes/)
 
-## Development
-- Update the README as you add features.
+## 🧑‍💻 Development
+- Update this README as you add features.
 - Replace placeholder code for payment and map with real integrations as needed.
+- See each folder for more docs.
 
 ---
 
-For more details, see the documentation in each folder.
+Made with ❤️ for hyperlocal delivery.
