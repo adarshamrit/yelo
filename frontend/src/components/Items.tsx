@@ -18,7 +18,11 @@ const Items = () => {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`${API_BASE}/items/`);
+        const url =
+          category === "all"
+            ? `${API_BASE}/items/`
+            : `${API_BASE}/items/?category=${encodeURIComponent(category)}`;
+        const res = await fetch(url);
         if (!res.ok) throw new Error("Failed to fetch items");
         const data = await res.json();
         setItems(data.items || data); // Support both {items: [...]} and [...] formats
@@ -29,7 +33,7 @@ const Items = () => {
       }
     };
     fetchItems();
-  }, []);
+  }, [category]);
 
   // Filtered items
   const filteredItems = items.filter(

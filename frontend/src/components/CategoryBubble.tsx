@@ -1,17 +1,28 @@
 import { HiOutlineSquares2X2 } from "react-icons/hi2";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-const categories = [
-	{ id: "all", name: "All" },
-	{ id: "food", name: "Food" },
-	{ id: "grocery", name: "Grocery" },
-	{ id: "pharmacy", name: "Pharmacy" },
-	{ id: "electronics", name: "Electronics" },
-	// Add more as needed
-];
+const API_BASE = "http://localhost:8000";
 
 const CategoryBubble: React.FC<{ onSelect: (cat: string) => void; selected: string }> = ({ onSelect, selected }) => {
 	const [open, setOpen] = React.useState(false);
+	const [categories, setCategories] = useState<{ id: string; name: string }[]>(
+		[{ id: "all", name: "All" }]
+	);
+
+	useEffect(() => {
+		fetch(`${API_BASE}/categories`)
+			.then((res) => (res.ok ? res.json() : []))
+			.then((data: string[]) => {
+				setCategories([
+					{ id: "all", name: "All" },
+					...data.map((cat) => ({
+						id: cat,
+						name: cat.charAt(0).toUpperCase() + cat.slice(1),
+					})),
+				]);
+			});
+	}, []);
+
 	return (
 		<>
 			<div className="fixed bottom-8 right-8 z-50 flex flex-col items-end">
