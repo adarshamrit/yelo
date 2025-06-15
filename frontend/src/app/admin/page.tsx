@@ -4,7 +4,7 @@ import ProtectedRoute from "@frontend/components/ProtectedRoute";
 
 export default function AdminPage() {
   return (
-    <ProtectedRoute>
+    <ProtectedRoute adminOnly>
       <AdminDashboard />
     </ProtectedRoute>
   );

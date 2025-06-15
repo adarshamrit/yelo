@@ -5,10 +5,17 @@ import Login from "./Login";
 import { HiOutlineUserCircle, HiOutlinePencil, HiOutlineArrowRightOnRectangle } from "react-icons/hi2";
 
 const UserProfile: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    // Try to get username from localStorage or backend (if available)
+    const user = typeof window !== "undefined" ? localStorage.getItem("yelo_user") : null;
+    setUsername(user);
+  }, [isAuthenticated]);
 
   React.useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -49,14 +56,19 @@ const UserProfile: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-end gap-2">
-      <button
-        className="rounded-full bg-yellow-500 hover:bg-yellow-600 p-1 text-white focus:outline-none"
-        onClick={() => setShowDropdown((v) => !v)}
-        aria-label="Profile menu"
-        title="Profile menu"
-      >
-        <HiOutlineUserCircle size={32} color="#111" />
-      </button>
+      <div className="flex items-center gap-2">
+        <span className="hidden md:inline text-gray-800 font-semibold text-base">
+          {user?.username ? `Welcome, ${user.username}` : "Welcome"}
+        </span>
+        <button
+          className="rounded-full bg-yellow-500 hover:bg-yellow-600 p-1 text-white focus:outline-none"
+          onClick={() => setShowDropdown((v) => !v)}
+          aria-label="Profile menu"
+          title="Profile menu"
+        >
+          <HiOutlineUserCircle size={32} color="#111" />
+        </button>
+      </div>
       {showDropdown && (
         <div ref={dropdownRef} className="absolute right-0 top-12 z-50 bg-white shadow-lg rounded w-40 py-2">
           <button className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-yellow-100" onClick={() => { setShowDropdown(false); /* TODO: trigger edit profile */ }}>

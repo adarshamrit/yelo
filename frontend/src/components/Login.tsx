@@ -1,5 +1,6 @@
 // src/components/Login.tsx
 import React, { useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 const API_BASE = "http://localhost:8000"; // Adjust if backend runs elsewhere
 
@@ -8,36 +9,53 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
-  const [phone, setPhone] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const detectMethod = (value: string) => {
+    if (/^\d{10,15}$/.test(value)) return "phone";
+    if (/^\S+@\S+\.\S+$/.test(value)) return "email";
+    return "unknown";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-    if (!phone.match(/^\d{10,15}$/)) {
-      setError("Please enter a valid phone number.");
+    const method = detectMethod(identifier);
+    if (method === "unknown") {
+      setError("Please enter a valid phone number or email address.");
       return;
     }
     if (!isLogin && name.trim() === "") {
       setError("Name is required for registration.");
       return;
     }
-    if (password.length < 4) {
-      setError("Password must be at least 4 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (!isLogin && !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=]{8,}$/.test(password)) {
+      setError("Password must contain at least one letter and one number.");
       return;
     }
     setLoading(true);
     try {
       const endpoint = isLogin ? "/login" : "/register";
       const payload = isLogin
-        ? { phone, password }
-        : { phone, password, name };
+        ? (method === "phone"
+            ? { phone: identifier, password }
+            : { email: identifier, password })
+        : (method === "phone"
+            ? { phone: identifier, password, name }
+            : { email: identifier, password, name });
       const res = await fetch(`${API_BASE}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -49,8 +67,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
       } else {
         setSuccess(isLogin ? "Login successful!" : "Registration successful!");
         if (isLogin && data.token) {
-          localStorage.setItem("yelo_token", data.token);
+          login(data.token);
           if (onLoginSuccess) onLoginSuccess();
+          window.location.reload(); // Force reload to ensure session is fully initialized
         }
       }
     } catch (err) {
@@ -93,24 +112,38 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
           <input
             className="w-full mb-3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
             type="text"
-            placeholder="Name"
+            placeholder="Name (as per your ID)"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            autoComplete="name"
           />
         )}
-        <input
-          className="w-full mb-3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          type="tel"
-          placeholder="Phone Number"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
+        <div className="mb-3 relative">
+          <input
+            className={`w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-yellow-400 transition ${identifier ? (detectMethod(identifier) === 'phone' ? 'border-blue-400' : detectMethod(identifier) === 'email' ? 'border-green-400' : 'border-red-400') : 'border-gray-300'}`}
+            type="text"
+            placeholder="Phone number or Email address"
+            value={identifier}
+            onChange={e => setIdentifier(e.target.value)}
+            autoComplete="username"
+          />
+          {identifier && detectMethod(identifier) === 'phone' && (
+            <span className="absolute right-3 top-2 text-blue-500 text-xs font-semibold">Phone</span>
+          )}
+          {identifier && detectMethod(identifier) === 'email' && (
+            <span className="absolute right-3 top-2 text-green-600 text-xs font-semibold">Email</span>
+          )}
+          {identifier && detectMethod(identifier) === 'unknown' && (
+            <span className="absolute right-3 top-2 text-red-500 text-xs font-semibold">Invalid</span>
+          )}
+        </div>
         <input
           className="w-full mb-3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          autoComplete={isLogin ? "current-password" : "new-password"}
         />
         {error && (
           <div className="text-red-500 mb-2 text-sm">{error}</div>
@@ -120,7 +153,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
         )}
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded transition disabled:opacity-60"
+          className="w-full px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-white font-semibold rounded transition disabled:opacity-60 mt-2 shadow-md"
           disabled={loading}
         >
           {loading ? (isLogin ? "Logging in..." : "Registering...") : isLogin ? "Login" : "Register"}
