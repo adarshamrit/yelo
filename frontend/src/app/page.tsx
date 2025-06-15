@@ -16,7 +16,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-200">
-      <Navbar />
+      <Navbar setFlow={setFlow} />
       <header className="bg-yellow-400 shadow p-6 mb-8">
         <h1 className="glitchy-title text-4xl font-extrabold text-center text-gray-900 tracking-tight drop-shadow-lg">
           <a

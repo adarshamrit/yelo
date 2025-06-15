@@ -4,7 +4,7 @@ import UserProfile from "./UserProfile";
 import CartIcon from "./CartIcon";
 import { useCart } from "../context/CartContext";
 
-const Navbar = () => {
+const Navbar = ({ setFlow }: { setFlow?: (flow: string) => void }) => {
   const [open, setOpen] = useState(false);
   const { cart } = useCart();
   return (
@@ -26,7 +26,16 @@ const Navbar = () => {
         </div>
         <ul className="hidden md:flex gap-8 text-lg font-semibold items-center">
           <li>
-            <a href="#cart" className="hover:text-yellow-700 flex items-center relative">
+            <a
+              href="#cart"
+              className="hover:text-yellow-700 flex items-center relative"
+              onClick={e => {
+                if (setFlow) {
+                  e.preventDefault();
+                  setFlow("cart");
+                }
+              }}
+            >
               <CartIcon />
               {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>
@@ -41,7 +50,17 @@ const Navbar = () => {
       {open && (
         <ul className="md:hidden bg-yellow-300 px-4 pb-4 space-y-2 text-lg font-semibold animate-fade-in-down">
           <li>
-            <a href="#cart" className="block py-2 flex items-center relative" onClick={() => setOpen(false)}>
+            <a
+              href="#cart"
+              className="block py-2 flex items-center relative"
+              onClick={e => {
+                setOpen(false);
+                if (setFlow) {
+                  e.preventDefault();
+                  setFlow("cart");
+                }
+              }}
+            >
               <CartIcon />
               {cart.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>

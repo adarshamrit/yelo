@@ -44,7 +44,7 @@ const Items = () => {
   return (
     <div className="relative rounded-lg shadow bg-white p-6">
       <h2 className="text-2xl font-bold mb-4 text-yellow-600 flex items-center gap-2">
-        <span className="inline-block w-2 h-6 bg-yellow-400 rounded mr-2"></span>Items
+        <span className="inline-block w-2 h-6 bg-yellow-400 rounded mr-2"></span>Store
       </h2>
       <input
         className="w-full mb-4 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
